@@ -8,6 +8,11 @@ class HelloTest < ActionDispatch::IntegrationTest
   end
 
   test "can get a 200 OK" do
+    # It's usually a good idea to explicitly stub your toggles in the "normal path",
+    # but if you have a lot of toggles, that can lead to modifying a lot of existing tests,
+    # so omitting it is also acceptable
+    # UNLEASH.expects(:is_enabled?).with("hello_restructure", anything).returns(false)
+
     get "/"
     assert_response :success
     
