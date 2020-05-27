@@ -1,0 +1,14 @@
+<% 
+  style = "background-color: orange"
+
+  if UNLEASH.is_enabled? "pretty_v2", @unleash_context
+    style = "background-color: #92a8d1"
+  end
+%>
+<div>
+  This is a pretty div
+
+  <div style="<%= style %>;">
+    Very nice!
+  </div>
+</div>
