@@ -2,7 +2,7 @@
 
 Basic examples of apps with feature toggles.
 
-If you havent' already, take a look at the Feature Toggle Primer: https://gist.github.com/JAMSUPREME/8c4450b584c8a72170f2be84b458b3ff
+If you haven't already, take a look at the Feature Toggle Primer: https://gist.github.com/JAMSUPREME/8c4450b584c8a72170f2be84b458b3ff
 
 # Startup
 
