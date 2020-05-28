@@ -2,6 +2,11 @@ require 'test_helper'
 
 class HelloTest < ActionDispatch::IntegrationTest
 
+  # Make sure all toggles are OFF by default, and do not accidentally hit the server during tests
+  setup do
+    UNLEASH.stubs(:is_enabled?).returns(false)
+  end
+
   # Make sure UNLEASH is always unstubbed
   teardown do
     UNLEASH.unstub(:is_enabled?)
@@ -32,6 +37,6 @@ class HelloTest < ActionDispatch::IntegrationTest
     
     data = JSON.parse(@response.body)
     assert data.is_a?(Array)
-    assert_equal data[0], "hello"
+    assert_equal "hello", data[0]
   end
 end
