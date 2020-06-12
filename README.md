@@ -86,7 +86,7 @@ There are a couple ways you can do this:
 
 If you've already got a DB migration framework in place, making a direct DB connection is a fairly reasonable strategy.
 
-In this example, we're using Rails db migrations, so it's as simple as building our DB adapter (link todo) and then creating a migration: (link todo)
+In this example, we're using Rails db migrations, so it's as simple as building our DB adapter [FeatureAdapter](https://github.com/JAMSUPREME/feature-toggle-testing/blob/master/rails-app/app/models/FeatureAdapter.rb#L30) and then creating a migration: [AddAToggle](https://github.com/JAMSUPREME/feature-toggle-testing/blob/master/rails-app/db/migrate/20200605185445_add_a_toggle.rb#L3)
 
 ## via unleash API
 
