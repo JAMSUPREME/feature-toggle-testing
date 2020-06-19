@@ -72,3 +72,24 @@ ng_components v2
 ```
 
 Bad scenario: You upgraded to v3, cleaned up the "hello" toggle, then had to revert to v2 and stuff is broken
+
+# Custom tooling
+
+There are some useful tools you may wish to add:
+- Enforce a naming convention
+- Ensure no one deletes live toggles
+- etc.
+
+There are a couple ways you can do this:
+
+## via direct DB connection
+
+If you've already got a DB migration framework in place, making a direct DB connection is a fairly reasonable strategy.
+
+In this example, we're using Rails db migrations, so it's as simple as building our DB adapter [FeatureAdapter](https://github.com/JAMSUPREME/feature-toggle-testing/blob/master/rails-app/app/models/FeatureAdapter.rb#L30) and then creating a migration: [AddAToggle](https://github.com/JAMSUPREME/feature-toggle-testing/blob/master/rails-app/db/migrate/20200605185445_add_a_toggle.rb#L3)
+
+## via unleash API
+
+The unleash API exposes some useful admin endpoints that are useful for managing your toggles: https://github.com/Unleash/unleash/blob/978a6a87b94bd242272ff61c1fe6cc1c2ee595f5/docs/api/admin/feature-toggles-api.md (also see the other MD files in the same dir)
+
+With those endpoints available, you can make a RESTful client and add a few customizations.
