@@ -1,0 +1,23 @@
+{
+  "name": "@passport-next/passport-apikey",
+  "version": "0.0.1",
+  "description": "A simple API key strategy for @passport-next",
+  "main": "./lib",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "passport",
+    "apikey",
+    "api",
+    "strategy"
+  ],
+  "author": "Ken Butler",
+  "license": "MIT",
+  "dependencies": {
+    "@passport-next/passport-strategy": "^1.1.0"
+  }
+}

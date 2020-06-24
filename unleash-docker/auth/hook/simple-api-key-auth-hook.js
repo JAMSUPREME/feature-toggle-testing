@@ -1,21 +1,19 @@
+const crypto = require('crypto');
+
 const unleash = require('unleash-server');
-const passport = require('@passport-next/passport');
-// const CustomStrategy = require('passport-custom').Strategy;
-const { Strategy } = require('@passport-next/passport-local');
+const passport = require('passport');
+const formidable = require('formidable');
+const APIKeyStrategy = require('@passport-next/passport-apikey').Strategy;
 
-const apiKeys = require('../config/api-keys');
+const apiKeys = new Set();
 
-
-passport.use('local', new Strategy({ usernameField: 'apikey', passwordField: 'apikey', passReqToCallback: true }, (username, password, done) => {
-    console.log('In strategy');
-    return done(null, { username: 'api-client' });
-}));  
+loadAPIKeys();
 
 function configureAuth(app) {
+    configureSessionMiddleware(app);
     registerLoginRoute(app);
     registerAuthCallbackRoute(app);
     registerAuthMiddleware(app);
-    configureSessionMiddleware(app);
     console.log('API key authentication configured for admin API');
 }
 
@@ -24,13 +22,13 @@ function configureSessionMiddleware(app) {
     app.use(passport.session());
     passport.serializeUser((user, done) => done(null, user));
     passport.deserializeUser((user, done) => done(null, user));
-    // passport.use('apikey', new CustomStrategy(
-    //     (req, callback) => {
-    //         console.log('In strategy');
-    //         // Do your custom user finding logic here, or set to false based on req object
-    //         callback(null, { username: 'api-client' });
-    //     }
-    // )); 
+    passport.use('apikey', new APIKeyStrategy((apiKey, done) => {
+        if (isValidApiKey(apiKey)) {
+            return done(null, { id: generateAPIKey(), username: apiKey });
+        } else {
+            return done(null, false, { message: 'Unauthorized' }, 403);
+        }
+    }));
 }
 
 function registerAuthMiddleware(app) {
@@ -82,7 +80,7 @@ function registerLoginRoute(app, redirectPath = '/') {
                     <div>
                         <form action="auth-callback" method="POST">
                             <label for="apiKey">Enter API key:</label>
-                            <input id="apikey" name="apikey"></input>
+                            <input type="password" id="apikey" name="apikey"></input>
                         </form>
                     </div>
                 </body>
@@ -93,17 +91,83 @@ function registerLoginRoute(app, redirectPath = '/') {
 
 function registerAuthCallbackRoute(app) {
     app.post('/api/admin/auth-callback',
-        passport.authenticate('local', { failureRedirect: '/', }),
-        (req, res) => { console.log('Auth completed'); return res.redirect('/'); }
+        parsePayload,
+        passport.authenticate('apikey', { failureRedirect: '/', }),
+        (req, res) => { res.redirect('/'); }
     );
 }
+
+function parsePayload(req, res, next) {
+    const form = formidable({ multiples: true });
+    form.parse(req, (err, fields, files) => {
+        if (err) {
+            return res
+                .status('400')
+                .json({
+                    message: 'Bad request'
+                })
+                .end();
+        }
+        req.body = fields;
+        req.files = files;
+        next();
+    });
+}
+
 function authenticated(req) {
     return isValidApiKey(req.get('apikey')) // Has header 
         || req.user;                        // Has session
 }
 
 function isValidApiKey(key) {
-    return apiKeys.includes(key)
+    return apiKeys.has(key);
 }
 
-module.exports = configureAuth;
+function loadAPIKeys() {
+    if (process.env['LOAD_KEYS_FROM_REMOTE']) {
+        loadAPIKeysFromRemote();
+    } else if (isModuleAvailable('../config/api-keys')) {
+        loadAPIKeysFromFile();
+    } else {
+        generateAPIKeys();
+    }
+}
+
+function loadAPIKeysFromRemote() {
+    console.log('Loading API keys from remote storage');
+    throw new Error('Not implemented');
+}
+
+function loadAPIKeysFromFile() {
+    console.log('Loading API keys from file');
+    const keys = require('../config/api-keys');
+    try {
+        keys.forEach(key => apiKeys.add(key));
+    } catch (e) {
+        console.log('Error occurred loading keys, expected exported array');
+        console.log(e);
+    }
+}
+
+function generateAPIKeys() {
+    console.log('Generating new API keys');
+    for (let i = 0; i < 5; i++) {
+        apiKeys.add(generateAPIKey());
+    }
+}
+
+function generateAPIKey() {
+    return crypto.randomBytes(20).toString('hex');
+}
+
+function isModuleAvailable(path) {
+    try {
+        require.resolve('../config/api-keys');
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+module.exports.hook = configureAuth;
+module.exports.keys = apiKeys;

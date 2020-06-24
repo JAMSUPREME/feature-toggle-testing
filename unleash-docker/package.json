@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@passport-next/passport": "^3.1.0",
+    "formidable": "^1.2.2",
     "passport": "^0.4.1",
     "unleash-server": "^3.3.5"
   }
