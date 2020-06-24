@@ -1,0 +1,84 @@
+{
+	"info": {
+		"_postman_id": "231c1868-d226-4dd6-8236-897135668980",
+		"name": "Unleash",
+		"description": "Sample requests for Unleash API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Admin API",
+			"item": [
+				{
+					"name": "Get Toggles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "apikey",
+								"value": "77140c7ecf016634fb23173199080b2498e933e3",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:4242/api/admin/features",
+							"host": [
+								"localhost"
+							],
+							"port": "4242",
+							"path": [
+								"api",
+								"admin",
+								"features"
+							]
+						},
+						"description": "Get the feature toggles"
+					},
+					"response": []
+				},
+				{
+					"name": "Post Toggle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "apikey",
+								"value": "99012a7f52cccda5d5841a74bda5810981f94e37",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Feature.E\",\r\n  \"description\": \"lorem ipsum..\",\r\n  \"enabled\": false,\r\n  \"strategies\": [\r\n    {\r\n      \"name\": \"default\",\r\n      \"parameters\": {}\r\n    }\r\n  ]\r\n}"
+						},
+						"url": {
+							"raw": "localhost:4242/api/admin/features",
+							"host": [
+								"localhost"
+							],
+							"port": "4242",
+							"path": [
+								"api",
+								"admin",
+								"features"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Client API",
+			"item": [],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
